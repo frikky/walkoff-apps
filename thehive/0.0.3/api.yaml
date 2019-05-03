@@ -11,13 +11,28 @@ actions:
     returns:
       schema:
         type: string
+  - name: get_item 
+    description: Update an alert field
+    parameters:
+      - name: field_type 
+        description: The type to get (alert, case..)
+        required: true
+        schema:
+          type: string
+      - name: cur_id 
+        description: The ID of the item to retrieve
+        required: true
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string 
   - name: update_field_string
     description: Update an alert field
     parameters:
       - name: field_type 
         description: The type to modify (alert, case..)
         required: true
-        enum: [Alert]
         schema:
           type: string
       - name: cur_id
@@ -38,20 +53,19 @@ actions:
     returns:
       schema:
         type: number
-devices:
-  - name: thehive
-    description: Thehive server
-    fields:
-      - name: server_uri
-        description: Base URL for TheHive 
-        placeholder: "http://127.0.0.1:9000"
-        required: true
-        type: string
-      - name: apikey
-        description: APIkey to TheHive - Requires all read/write/alert access for everything to work
-        required: true
-        type: string
-
+#devices:
+#  - name: thehive
+#    description: Thehive server
+#    fields:
+#      - name: server_uri
+#        description: Base URL for TheHive 
+#        placeholder: "http://127.0.0.1:9000"
+#        required: true
+#        type: string
+#      - name: apikey
+#        description: APIkey to TheHive - Requires all read/write/alert access for everything to work
+#        required: true
+#        type: string
 
 #- name: string_contains 
   #  description: Check if one string contains another

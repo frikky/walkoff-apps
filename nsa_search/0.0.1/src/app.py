@@ -8,6 +8,7 @@ import random
 import secret
 import requests
 import json
+import re
 
 from walkoff_app_sdk.app_base import AppBase
 
@@ -33,12 +34,34 @@ class NSA(AppBase):
 
     # Return object
     async def run_search(self, search_string):
+        if len(search_string) <= 1:
+            return ""
+
         ret = requests.get("%s/api/search/%s" % (secret.url, search_string))
+
+        # Prevent it from running infinite
+        cnt = 0
+        maxcnt = 180
         while(1):
             if ret.json()["done"]:
-                return ret.text
+                newstr = str(ret.json()).replace("\'", "\"")
+                newstr = newstr.replace("True", "true")
+                newstr = newstr.replace("False", "false")
+                return newstr
     
+            cnt += 1
+            if cnt == maxcnt:
+                return ""
+
             time.sleep(1)
+
+    # Return first match 
+    async def re_submatch(self, pattern, input_string):
+        ret = re.search(pattern, input_string)
+        if ret:
+            return ret.group(1)
+
+        return ""
     
     # Requires json object of NSA search
     # Searches for a specific search in NSA (e.g. CVE)
@@ -49,7 +72,9 @@ class NSA(AppBase):
             pass
 
         for item in input_object[array_name]:
+            print("NOT FOUND YET!!")
             if item[object_name] == search_type:
+                print("FOUND!!")
                 return item
     
         return {}
