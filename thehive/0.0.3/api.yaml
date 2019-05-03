@@ -1,0 +1,87 @@
+walkoff_version: 1.0.0
+app_version: 0.0.3
+name: thehive:0.0.3
+description: Testing of thehive implementation with WALKOFF
+contact_info:
+  name: "@frikkylikeme" 
+  url: https://github.com/frikky
+actions:
+  - name: show_secret 
+    description: Returns thehive secrets to gui (url & APIKEY) - used for testing
+    returns:
+      schema:
+        type: string
+  - name: update_field_string
+    description: Update an alert field
+    parameters:
+      - name: field_type 
+        description: The type to modify (alert, case..)
+        required: true
+        enum: [Alert]
+        schema:
+          type: string
+      - name: cur_id
+        description: The ID of the item to modify
+        required: true
+        schema:
+          type: string
+      - name: field 
+        description: The field to modify
+        required: true
+        schema:
+          type: string
+      - name: data 
+        description: The data to set the field to. If you want to append to what already exists, start with %s.
+        required: true
+        schema:
+          type: string
+    returns:
+      schema:
+        type: number
+devices:
+  - name: thehive
+    description: Thehive server
+    fields:
+      - name: server_uri
+        description: Base URL for TheHive 
+        placeholder: "http://127.0.0.1:9000"
+        required: true
+        type: string
+      - name: apikey
+        description: APIkey to TheHive - Requires all read/write/alert access for everything to work
+        required: true
+        type: string
+
+
+#- name: string_contains 
+  #  description: Check if one string contains another
+  #  parameters:
+  #    - name: field 
+  #      description: The data to check with
+  #      required: true
+  #      schema:
+  #        type: string
+  #    - name: string_check 
+  #      description: The data to check if field contains
+  #      required: true
+  #      schema:
+  #        type: string
+  #  returns:
+  #    schema:
+  #      type: string
+  #- name: string_startswith 
+  #  description: Check if one string contains another
+  #  parameters:
+  #    - name: field 
+  #      description: The data to check with
+  #      required: true
+  #      schema:
+  #        type: string
+  #    - name: string_check 
+  #      description: The data to check if field startswith 
+  #      required: true
+  #      schema:
+  #        type: string
+  #  returns:
+  #    schema:
+  #      type: string
