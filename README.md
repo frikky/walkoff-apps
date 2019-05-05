@@ -3,6 +3,8 @@ Here to show off some integrations ive made related to https://github.com/nsacyb
 
 Other apps that are not up to date can be found at https://github.com/nsacyber/WALKOFF-apps
 
+* Just done: Created a test for autogenerating a new app based on an input library (done with thehive4py). This might make walkoff more usable :) 
+
 * RE TheHive issue: https://github.com/TheHive-Project/TheHive/issues/956
 
 ## Todo etc..
