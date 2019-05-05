@@ -2,4 +2,7 @@
 *.swo
 *secret*
 *test*
-generator/
+
+generator/generated
+generator/test*
+generator/thehive*
