@@ -6,3 +6,5 @@
 generator/generated
 generator/test*
 generator/thehive*
+
+docker/images
