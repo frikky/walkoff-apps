@@ -3,6 +3,7 @@ Here to show off some integrations ive made related to https://github.com/nsacyb
 Other apps that are NOT UP TO DATE can be found at https://github.com/nsacyber/WALKOFF-apps
 
 * RE TheHive issue: https://github.com/TheHive-Project/TheHive/issues/956
+* TheHive webhook that can interact easily: https://github.com/frikky/walkoff-webhook
 
 ## Apps - Should be functional
 * thehive 		- Contains two specific endpoints to interact with TheHive
