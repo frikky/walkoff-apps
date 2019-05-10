@@ -1,6 +1,6 @@
 walkoff_version: 1.0.0
 app_version: 0.0.1
-name: nsa_search:0.0.1
+name: nsa_search
 description: Testing of NSA search implementation with WALKOFF
 contact_info:
   name: "@frikkylikeme" 
