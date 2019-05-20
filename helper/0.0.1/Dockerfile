@@ -19,8 +19,10 @@ COPY --from=builder /install /usr/local
 COPY src /app
 
 # Install any binary dependencies needed in our final image
-RUN apk --no-cache add --update libmagic
+#RUN apk --no-cache add --update libmagic
 
 # Finally, lets run our app!
 WORKDIR /app
+# This is here because of an issue with python thingies..
+RUN cp -r /app/walkoff_app_sdk/common /app/common
 CMD python app.py --log-level DEBUG

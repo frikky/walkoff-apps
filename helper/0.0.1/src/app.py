@@ -5,20 +5,19 @@ import asyncio
 import time
 import random
 
-import secret
 import requests
 import json
 import re
 
 from walkoff_app_sdk.app_base import AppBase
 
-class NSA(AppBase):
+class Helper(AppBase):
     """
     An example of a Walkoff App.
     Inherit from the AppBase class to have Redis, logging, and console logging set up behind the scenes.
     """
     __version__ = "0.0.1"
-    app_name = "nsa_search"
+    app_name = "helper"
 
     def __init__(self, redis, logger, console_logger=None):
         """
@@ -28,9 +27,6 @@ class NSA(AppBase):
         :param console_logger:
         """
         super().__init__(redis, logger, console_logger)
-
-    async def show_secret(self):
-        return "url=%s" % (secret.url)
 
     async def echo(self, input_data):
         print(input_data)
@@ -42,15 +38,20 @@ class NSA(AppBase):
 
     async def get_json_field(self, input_data, field):
         # Formatting..
+        print(input_data)
         input_data = str(input_data).replace("\'", "\"")
         input_data = input_data.replace("True", "true")
         input_data = input_data.replace("False", "false")
+        input_data = input_data.replace("None", "\"\"")
+        print(input_data)
 
         try:
             input_data = json.loads(input_data)
-        except TypeError:
-            pass
+        except TypeError as e:
+            print(e)
+            return e
         except json.decoder.JSONDecodeError as e:
+            print(e)
             return e
 
         try:
@@ -58,30 +59,7 @@ class NSA(AppBase):
         except KeyError as e:
             return "%s doesn't exist: %s" % (field, e)
 
-    # Return object
-    async def run_search(self, search_string):
-        if len(search_string) <= 1:
-            return ""
-
-        ret = requests.get("%s/api/search/%s" % (secret.url, search_string))
-
-        # Prevent it from running infinite
-        cnt = 0
-        maxcnt = 180
-        while(1):
-            if ret.json()["done"]:
-                newstr = str(ret.json()).replace("\'", "\"")
-                newstr = newstr.replace("True", "true")
-                newstr = newstr.replace("False", "false")
-                return newstr
-    
-            cnt += 1
-            if cnt == maxcnt:
-                return ""
-
-            time.sleep(1)
-
-    # Return first match 
+        # Return first match 
     async def re_submatch(self, pattern, input_string):
         print("%s, %s" % (pattern, input_string))
         try:
@@ -94,8 +72,6 @@ class NSA(AppBase):
 
         return ""
     
-    # Requires json object of NSA search
-    # Searches for a specific search in NSA (e.g. CVE)
     async def find_search_object(self, input_object, search_type, array_name, object_name):
         try:
             input_object = json.loads(input_object)
@@ -111,4 +87,4 @@ class NSA(AppBase):
         return {}
 
 if __name__ == "__main__":
-    asyncio.run(NSA.run(), debug=True)
+    asyncio.run(Helper.run(), debug=True)

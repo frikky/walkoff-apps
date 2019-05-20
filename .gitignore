@@ -7,3 +7,4 @@ generator/test*
 generator/thehive*
 
 docker/images
+*__pycache__

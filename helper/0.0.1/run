@@ -1,0 +1,7 @@
+#!/bin/sh
+docker stop helper
+docker rm helper
+docker rmi helper
+docker build . -t helper
+
+docker run helper
