@@ -1,0 +1,71 @@
+walkoff_version: 1.0.0
+app_version: 0.0.1
+name: carbon_black 
+description: Carbon Black integration with WALKOFF 
+contact_info:
+  name: "@frikkylikeme" 
+  url: https://github.com/frikky
+actions:
+  - name: isolate 
+    description: Isolate a host in Carbon Black
+    parameters:
+      - name: url 
+        description: The CB URL 
+        required: true
+        schema:
+          type: string 
+      - name: token
+        description: The carbon black API-key 
+        required: true
+        schema:
+          type: string 
+      - name: hostname 
+        description: The hostname of the host to isolate
+        required: true
+        schema:
+          type: string 
+    returns:
+      schema:
+        type: boolean 
+  - name: process_search
+    description: Runs a process search and returns the amount found 
+    parameters:
+      - name: url 
+        description: The CB URL 
+        required: true
+        schema:
+          type: string 
+      - name: token
+        description: The carbon black API-key 
+        required: true
+        schema:
+          type: string 
+      - name: query 
+        description: The searchquery to use
+        required: true
+        schema:
+          type: string 
+    returns:
+      schema:
+        type: number 
+  - name: binary_search
+    description: Runs a binary search and returns the amount found 
+    parameters:
+      - name: url 
+        description: The CB URL 
+        required: true
+        schema:
+          type: string 
+      - name: token
+        description: The carbon black API-key 
+        required: true
+        schema:
+          type: string 
+      - name: query 
+        description: The searchquery to use
+        required: true
+        schema:
+          type: string 
+    returns:
+      schema:
+        type: number 

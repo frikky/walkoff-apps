@@ -1,0 +1,60 @@
+walkoff_version: 1.0.0
+app_version: 0.0.1
+name: splunk 
+description: Splunk integration with WALKOFF 
+contact_info:
+  name: "@frikkylikeme" 
+  url: https://github.com/frikky
+actions:
+  - name: echo 
+    description: Echo 
+    parameters:
+      - name: input_data 
+        description: The data to echo
+        required: true
+        schema:
+          type: string
+    returns:
+      schema:
+        type: string 
+  - name: SplunkQuery 
+    description: Returns the amount of search results
+    parameters:
+      - name: url 
+        description: The Splunk URL 
+        required: true
+        schema:
+          type: string 
+      - name: username 
+        description: The Splunk username
+        required: true
+        schema:
+          type: string 
+      - name: password 
+        description: The Splunk password
+        required: true
+        schema:
+          type: string 
+      - name: query 
+        description: The Splunk query to run 
+        required: true
+        schema:
+          type: string 
+      - name: result_limit 
+        description: Splunk amount limit 
+        required: false
+        schema:
+          type: string 
+      - name: earliest_time 
+        description: The timeframe to use (e.g. -48h) 
+        required: false
+        schema:
+          type: string 
+      - name: latest_time 
+        description: The timeframe to use (e.g. -48h) 
+        required: false
+        schema:
+          type: string
+    returns:
+      schema:
+        type: number 
