@@ -12,3 +12,4 @@ docker rmi walkoff_app_thehive:latest
 docker rmi localhost:5000/walkoff_app_thehive:0.0.3 
 docker rmi localhost:5000/walkoff_app_nsa_search:0.0.1
 docker rmi localhost:5000/walkoff_app_hello_world:1.0.0 
+docker rmi localhost:5000/walkoff_app_cortex:0.0.1

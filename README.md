@@ -5,9 +5,12 @@ Other apps that are NOT UP TO DATE can be found at https://github.com/nsacyber/W
 * RE TheHive issue: https://github.com/TheHive-Project/TheHive/issues/956
 * TheHive webhook that can interact easily: https://github.com/frikky/walkoff-webhook
 
-## Apps - Should be functional
+## Apps 
 * thehive 		- Contains two specific endpoints to interact with TheHive
-* nsa_search	- Has some helper functions useful for JSON & string manipulation
+* cortex 		- (CHANGE api.yaml for prod) Can find and run analyzers 
+* helper 		- Has some helper functions useful for JSON & string manipulation
+* splunk		- Can run searches in splunk 
+* Carbon Black 	- Can isolate and run process / binary searches in cb
 
 ## Goal
 * Help analysts leveraging TheHive & MISP be able to automate processes without the need for writing code (This is hard :()) 
@@ -20,4 +23,3 @@ Other apps that are NOT UP TO DATE can be found at https://github.com/nsacyber/W
 ## Todo
 * Add TheHive webhook directly as an app - Not sure how to approach this
 * MISP testing
-
