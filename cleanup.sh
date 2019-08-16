@@ -13,3 +13,5 @@ docker rmi localhost:5000/walkoff_app_thehive:0.0.3
 docker rmi localhost:5000/walkoff_app_nsa_search:0.0.1
 docker rmi localhost:5000/walkoff_app_hello_world:1.0.0 
 docker rmi localhost:5000/walkoff_app_cortex:0.0.1
+docker rmi localhost:5000/walkoff_app_carbon_black:0.0.1
+docker rmi localhost:5000/walkoff_app_splunk:0.0.1

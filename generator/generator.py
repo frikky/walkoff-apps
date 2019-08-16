@@ -29,32 +29,9 @@ import os
 import yaml
 import jedi
 import shutil
-#from docstring_parser import parse
-
-#entrypoint_filename = "api"
-#entrypoint_directory = "thehive4py"
-#entrypoint_file = "%s/%s.py" % (entrypoint_directory, entrypoint_filename)
-##entrypoint_file = "thehive4py"
-#source = open(entrypoint_file, "r").read()
-#
-#entrypoint = jedi.Script(source, path=entrypoint_file)
-#
-#internalobjects = []
-#for item in entrypoint.completions():
-#    #print(item.complete, item.name)
-#    if item.type == "class":
-#        # FIXME - missing something
-#        if "__main__" in item.full_name:
-#            internalobjects.append(item)
-#
-#        continue
-
-# DOCSTRING!!
-#print(internalobjects[0].docstring())
-#print(internalobjects[1].name_with_symbols)
 
 # Testing generator
-entrypoint_directory = "thehive4py"
+entrypoint_directory = "rfapi"
 
 source = '''
 import %s
@@ -135,22 +112,23 @@ def loop_modules(modules, data):
             skip_functions = ["__init__"]
             skip_parameters = ["self"]
             cnt = 0
-            breakcnt = 3
             for item in numberinternalfunctions:
                 if item.parent().name != origparent:
                     continue
 
-                if item.name in skip_functions:
+                # FIXME - prolly wrong
+                if item.name in skip_functions or (item.name.startswith("__") and item.name.endswith("__")):
                     continue
 
                 # FIXME - remove
-                if "=" not in item.get_line_code():
-                    continue
+                #print(item.get_line_code())
+                #if "=" not in item.get_line_code():
+                #    continue
 
-                if item.docstring() in item.get_line_code():
-                    print("NO DOCSTRING FOR: %s. Skipping!" % item.name)
-                    cnt += 1
-                    continue
+                #if item.docstring() in item.get_line_code():
+                #    print("NO DOCSTRING FOR: %s. Skipping!" % item.name)
+                #    cnt += 1
+                #    continue
 
                 curfunction = {
                     "name": item.name,
@@ -159,7 +137,6 @@ def loop_modules(modules, data):
 
                 params = []
                 curreturn = {}
-                print()
 
                 function = item.docstring().split("\n")[0]
                 for line in item.docstring().split("\n"):
@@ -179,7 +156,7 @@ def loop_modules(modules, data):
                     for param in params:
                         #print(param["name"], curname)
                         if param["name"] == curname:
-                            print("ALREADY EXISTS: %s" % curname)
+                            #print("ALREADY EXISTS: %s" % curname)
                             paramfound = True
                             foundindex = cnt
                             break
@@ -196,7 +173,9 @@ def loop_modules(modules, data):
                             #print(line)
                             curparam["name"] = curname 
                             curparam["description"] = " ".join(linesplit[2:])
-                            print(curparam["description"])
+                            #print(curparam["description"])
+                            if "\r\n" in curparam["description"]:
+                                curparam["description"] = " ".join(curparam["description"].split("\r\n"))
                             if "\n" in curparam["description"]:
                                 curparam["description"] = " ".join(curparam["description"].split("\n"))
 
@@ -206,11 +185,9 @@ def loop_modules(modules, data):
                             params.append(curparam)
                     elif line.startswith(":type"):
                         if paramfound:
-                            #print("FOUND!!!")
-                            #print(params[foundindex])
-                            #print("FOUND!!!")
                             params[foundindex]["schema"] = {}
                             params[foundindex]["schema"]["type"] = " ".join(linesplit[2:])
+                            #print(params)
 
                             #print(line)
                     elif line.startswith(":rtype"): 
@@ -218,15 +195,36 @@ def loop_modules(modules, data):
 
 
                 # Check whether param is required
+                # FIXME - remove
+                #if len(params) != 0:
+                #    print(params)
+                #    continue
+
+                #print(function)
                 #print(params)
-                #print(item.docstring())
 
                 # FIXME - this might crash when missing docstrings
+                # FIXME - is also bad splitt (can be written without e.g. spaces
                 # This should maybe be done first? idk
                 fields = function.split("(")[1][:-1].split(", ")
+                if len(params) == 0:
+                    # Handle missing docstrings
+                    params = []
+                    for item in fields:
+                        if item == "self":
+                            continue
+
+                        params.append({
+                            "name": item,
+                            "description": "",
+                            "schema": {},
+                            "function": function,
+                        })
+
                 cnt = 0
                 for param in params:
                     found = False
+
                     for field in fields:
                         if param["name"] in field:
                             if "=" in field:
@@ -235,14 +233,22 @@ def loop_modules(modules, data):
                             else:
                                 param["required"] = True
 
+                            found = True
                             break
 
                     if not param.get("schema"):
-                        print("Defining object schema for %s" % param["name"])
+                        #print("Defining object schema for %s" % param["name"])
                         param["schema"] = {}
                         param["schema"]["type"] = "object"
 
                     param["position"] = cnt
+
+                    if not found:
+                        # FIXME - waht here?
+                        pass
+                        #print("HANDLE NOT FOUND")
+                        #print(param)
+                        #print(fields)
 
                     cnt += 1
 
@@ -254,7 +260,15 @@ def loop_modules(modules, data):
                     curfunction["returns"]["schema"] = {}
                     curfunction["returns"]["schema"]["type"] = "object"
 
-                print("Finished prepping %s with %d parameters and return %s" % (item.name, len(curfunction["parameters"]), curfunction["returns"]["schema"]["type"]))
+                #print(curfunction)
+                try:
+                    print("Finished prepping %s with %d parameters and return %s" % (item.name, len(curfunction["parameters"]), curfunction["returns"]["schema"]["type"]))
+                except KeyError as e:
+                    print("Error: %s" % e)
+                    #print("Finished prepping %s with 0 parameters and return %s" % (item.name, curfunction["returns"]["schema"]["type"]))
+                    curfunction["parameters"] = []
+                except AttributeError as e:
+                    pass
 
                 try:
                     data["actions"].append(curfunction)
@@ -262,32 +276,32 @@ def loop_modules(modules, data):
                     data["actions"] = []
                     data["actions"].append(curfunction)
 
-                return data
+                #return data
 
-                if cnt == breakcnt:
-                    break
+                # FIXME
+                #if cnt == breakcnt:
+                #    break
 
-                cnt += 1
-                #print(item.module_path)
+                #cnt += 1
 
                 # Check if 
 
-                #print(item.parent().name) 
 
                 # THIS IS TO GET READ THE ACTUAL CODE
                 #functioncode = item.get_line_code(after=prevnumber-item.line-1)
                 #prevnumber = item.line
 
-        break
+        # break
+    return data
 
 # Generates the base information necessary to make an api.yaml file
 def generate_base_yaml(filename, version, appname):
     print("Generating base app for library %s with version %s" % (appname, version))
     data = {
-        "walkoff_version": "1.0.0",
+        "walkoff_version": "0.0.1",
         "app_version": version,
-        "name": "%s" % appname,
-        "description": "Autogenerated yaml with frikkylikeme's generator",
+        "name": appname,
+        "description": "Autogenerated yaml with @Frikkylikeme's generator",
         "contact_info": {
             "name": "@frikkylikeme",
             "url": "https://github.com/frikky",
@@ -297,7 +311,6 @@ def generate_base_yaml(filename, version, appname):
     return data
 
 def generate_app(filepath, data):
-    print(data)
 
     tbd = [
         "library_path",
@@ -330,11 +343,14 @@ def generate_app(filepath, data):
     for action in data["actions"]:
         internalparamstring = ""
         paramstring = ""
-        for param in action["parameters"]:
-            if param["required"] == False:
-                paramstring += "%s, " % (param["default_value"])
-            else:
-                paramstring += "%s, " % param["name"]
+        try:
+            for param in action["parameters"]:
+                if param["required"] == False:
+                    paramstring += "%s, " % (param["default_value"])
+                else:
+                    paramstring += "%s, " % param["name"]
+        except KeyError:
+            action["parameters"] = []
 
             #internalparamstring += "%s, " % param["name"]
 
@@ -342,12 +358,12 @@ def generate_app(filepath, data):
         #internalparamstring = internalparamstring[:-2]
 
         functionstring = '''    async def %s(%s):
-        self.wrapper.%s(%s)
+        return self.wrapper.%s(%s)
         ''' % (action["name"], paramstring, action["name"], paramstring)
 
         functions.append(functionstring)
 
-    filedata = '''from walkoff_app_sdk.app_base import AppBase
+    filedata = '''from app_base import AppBase
 import asyncio
 
 from %s import %s
@@ -442,10 +458,10 @@ def build_base_structure(appname, version):
         except FileExistsError:
             print("%s already exists. Skipping." % directory)
 
+    # "docker-compose.yml", 
+    # "env.txt",
     filenames = [
-        "docker-compose.yml", 
         "Dockerfile", 
-        "env.txt",
         "requirements.txt"
     ]
 
@@ -454,11 +470,11 @@ def build_base_structure(appname, version):
         print("Copied baseline/%s." % filename) 
 
 def main():
-    appname = "thehive4py"
+    appname = entrypoint_directory
     version = "0.0.1"
-    app_path = "generated/%s/%s" % (appname, version)
-    api_yaml_path = "%s/api.yaml" % (app_path)
-    app_python_path = "%s/src/app.py" % (app_path)
+    output_path = "generated/%s/%s" % (appname, version)
+    api_yaml_path = "%s/api.yaml" % (output_path)
+    app_python_path = "%s/src/app.py" % (output_path)
 
     # Builds the directory structure for the app
     build_base_structure(appname, version)
